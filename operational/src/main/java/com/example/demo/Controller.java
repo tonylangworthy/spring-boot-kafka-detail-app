@@ -4,17 +4,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class Controller {
 
+    private final Producer producer;
 
     @Autowired
-    private KafkaTemplate<Object, Object> template;
+    public Controller(Producer producer) {
+        this.producer = producer;
+    }
 
-    @PostMapping(path = "/send/{what}")
-    public void sendFoo(@PathVariable String what) {
-        this.template.send("topic4", what);
+    @PostMapping("/publish")
+    public void sendFoo(@RequestParam("status") String status) {
+
+        this.producer.sendMessage(status);
     }
 }
